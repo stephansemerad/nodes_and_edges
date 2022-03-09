@@ -1,0 +1,20 @@
+[
+  { "data": { "id": "ae", "weight": 1, "source": "a", "target": "e" } },
+  { "data": { "id": "ab", "weight": 3, "source": "a", "target": "b" } },
+  { "data": { "id": "ea", "weight": 1, "source": "e", "target": "a" } },
+
+  { "data": { "id": "be", "weight": 4, "source": "b", "target": "e" } },
+  { "data": { "id": "bc", "weight": 5, "source": "b", "target": "c" } },
+  { "data": { "id": "ce", "weight": 6, "source": "c", "target": "e" } },
+  { "data": { "id": "cd", "weight": 2, "source": "c", "target": "d" } },
+  {
+    "data": {
+      "id": "dee",
+      "weight": 8,
+      "source": "d",
+      "target": "e",
+      "label": "50%"
+    },
+    "classes": "autorotate"
+  }
+]

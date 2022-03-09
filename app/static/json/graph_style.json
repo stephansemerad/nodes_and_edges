@@ -1,0 +1,37 @@
+[
+  {
+    "selector": "node",
+    "css": {
+      "content": "data(name)",
+      "color": "#FFFFFF",
+      "backgroundColor": "#4f46e5",
+      "text-wrap": "wrap",
+      "text-max-width": 120,
+      "font-size": "14px",
+      "text-valign": "center",
+      "shape": "rectangle",
+      "width": "150px",
+      "height": "label",
+      "padding": 2
+    }
+  },
+  {
+    "selector": "edge",
+    "css": {
+      "target-arrow-shape": "triangle",
+      "curve-style": "bezier",
+      "width": 1,
+      "line-color": "#888888",
+      "target-arrow-color": "#888888"
+    }
+  },
+  {
+    "selector": "edge[label]",
+    "css": {
+      "label": "data(label)",
+      "edge-text-rotation": "autorotate",
+      "font-size": "14px",
+      "color": "#888888"
+    }
+  }
+]

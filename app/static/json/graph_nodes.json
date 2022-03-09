@@ -1,0 +1,7 @@
+[
+  { "data": { "id": "a", "name": "name_a", "group": "group_a" } },
+  { "data": { "id": "b", "name": "name_b", "group": "group_b" } },
+  { "data": { "id": "c", "name": "name_c", "group": "group_c" } },
+  { "data": { "id": "d", "name": "name_d", "group": "group_d" } },
+  { "data": { "id": "e", "name": "name_e", "group": "group_e" } }
+]
