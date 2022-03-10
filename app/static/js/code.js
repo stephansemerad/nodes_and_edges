@@ -1,8 +1,27 @@
 new Vue({
   el: "#app",
+  side_navigation: false,
   delimiters: ["[[", "]]"],
   data: {
+    display: {
+      search: true,
+      structure: true,
+      groups: true,
+      layout: true,
+      nodes: true,
+      edges: true,
+      json: true,
+    },
+
     msg: "",
+    search: "",
+    structure_id: "1",
+    layout: "breadthfirst",
+    curve_style: "straight",
+    group: {
+      name: "",
+      color: "#4f46e5",
+    },
     node: {
       name: "",
     },
@@ -11,13 +30,14 @@ new Vue({
       child: "",
     },
     structure: {
-      id: "test",
       layout: "breadthfirst",
-      root: "",
+      roots: "",
       nodes: [],
       edges: [],
       style: [],
     },
+    groups: [],
+    svg_content: "",
   },
   created() {
     window.addEventListener("keypress", this.on_key_press);
@@ -36,46 +56,154 @@ new Vue({
       this.graph();
     },
 
+    view_as_svg: function () {
+      console.log("view_as_svg");
+      var svg_content = this.cy.svg({ scale: 1, full: true, bg: "#ffffff" });
+      var blob = new Blob([svg_content], {
+        type: "image/svg+xml;charset=utf-8",
+      });
+      var url = URL.createObjectURL(blob);
+      // window.location = url;
+      window.open(url, "_blank");
+    },
+
+    save_as_svg: function () {
+      console.log("save_as_svg");
+      var svg_content = this.cy.svg({ scale: 1, full: true, bg: "#ffffff" });
+      var blob = new Blob([svg_content], {
+        type: "image/svg+xml;charset=utf-8",
+      });
+      var title = this.structure_id;
+      saveAs(blob, title + ".svg");
+    },
+
+    add_structure() {
+      console.log("add_structure");
+      var fd = new FormData();
+      this.structure.structure_id = this.structure_id;
+      fd.append("data", JSON.stringify(this.structure));
+      axios.post("/add_structure", fd).then((response) => {
+        console.log(response);
+        console.log(response.data.status);
+        if (response.data.status === "ok") {
+          this.get_structures();
+        }
+      });
+    },
+
+    add_group() {
+      console.log("add_group");
+      var fd = new FormData();
+      this.group.structure_id = this.structure_id;
+      fd.append("data", JSON.stringify(this.group));
+      axios.post("/add_group", fd).then((response) => {
+        console.log(response);
+        console.log(response.data.status);
+        if (response.data.status === "ok") {
+          this.get_structure();
+        }
+      });
+    },
+
+    get_groups() {
+      console.log("get_groups");
+      axios.get("/get_groups").then((response) => {
+        this.groups = response.data;
+      });
+    },
+
     add_node() {
       console.log("add_node");
       var fd = new FormData();
+      this.node.structure_id = this.structure_id;
       fd.append("data", JSON.stringify(this.node));
       axios.post("/add_node", fd).then((response) => {
         console.log(response);
+        console.log(response.data.status);
+        if (response.data.status === "ok") {
+          this.get_structure();
+        }
       });
     },
 
     add_edge() {
       console.log("add_edge");
-      var fd = new FormData("data", this.edge);
+      var fd = new FormData();
+      fd.append("data", JSON.stringify(this.edge));
       axios.post("/add_edge", fd).then((response) => {
-        console.log(response.data);
+        this.get_structure();
       });
     },
 
-    remove_node() {},
+    update(table, column, id, value) {
+      console.log("--------------------");
+      console.log("update");
+      console.log("table: ", table);
+      console.log("column: ", column);
+      console.log("id: ", id);
+      console.log("value: ", value);
+      console.log("--------------------");
 
-    remove_edge() {},
+      var fd = new FormData();
+
+      fd.append("table", table);
+      fd.append("column", column);
+      fd.append("id", id);
+      fd.append("value", value);
+
+      axios.post("/update", fd).then((response) => {
+        console.log(response);
+        console.log(response.data.status);
+        this.get_structure();
+      });
+    },
+
+    delete_node(id) {
+      console.log("delete_node");
+      console.log("id: ", id);
+      var fd = new FormData();
+      fd.append("id", id);
+      axios.post("/delete_node", fd).then((response) => {
+        console.log(response.data);
+        this.get_structure();
+      });
+    },
+
+    delete_edge(id) {
+      console.log("delete_edge");
+      console.log("id: ", id);
+      var fd = new FormData();
+      fd.append("id", id);
+      axios.post("/delete_edge", fd).then((response) => {
+        console.log(response.data);
+        if (response.data.status == "ok") {
+          this.get_structure();
+        }
+      });
+    },
 
     get_structure() {
       console.log("get_structure");
+      axios
+        .get("/get_structure", {
+          params: {
+            search: this.search,
+            layout: this.layout,
+            structure_id: this.structure_id,
+            curve_style: this.curve_style,
+          },
+        })
+        .then((response) => {
+          console.log(response.data);
+          this.structure = JSON.parse(JSON.stringify(response.data))[0];
+          this.graph();
+        });
     },
 
-    get_data() {
-      axios.get("/static/json/graph_style.json").then((response) => {
-        this.structure.style = JSON.parse(JSON.stringify(response.data));
-        axios.get("/static/json/graph_nodes.json").then((response) => {
-          this.structure.nodes = JSON.parse(JSON.stringify(response.data));
-          axios.get("/static/json/graph_edges.json").then((response) => {
-            this.structure.edges = JSON.parse(JSON.stringify(response.data));
-            this.graph();
-          });
-        });
-      });
-    },
     graph() {
       console.log("graph");
-      var cy = (window.cy = cytoscape({
+      self = this;
+      this.cy = cytoscape({
         container: document.getElementById("cy"),
 
         autounselectify: true,
@@ -90,7 +218,7 @@ new Vue({
         layout: {
           name: this.structure.layout, // breadthfirst, circle, grid,  random, concentric, cose
           directed: true,
-          roots: "#a",
+          roots: this.structure.roots,
           padding: 2,
         },
         style: this.structure.style,
@@ -98,20 +226,32 @@ new Vue({
           nodes: this.structure.nodes,
           edges: this.structure.edges,
         },
-      }));
-
-      cy.on("tap", "node", function () {
-        console.log("node!");
-        console.log("id", this.id());
       });
 
-      cy.on("tap", "edge", function () {
+      self.cy.on("tap", "node", function () {
+        console.log("node!");
+        console.log("id", this.id());
+
+        if (self.edge.parent === "") {
+          self.edge.parent = this.id();
+        } else {
+          self.edge.child = this.id();
+          self.add_edge();
+          self.edge.parent = "";
+          self.edge.child = "";
+        }
+      });
+
+      self.cy.on("tap", "edge", function () {
         console.log("edge!");
         console.log("id", this.id());
+        self.delete_edge(this.id());
       });
     }, // end graph
   }, // end methods
   mounted: function () {
-    this.get_data();
+    this.get_structure();
+    this.get_groups();
+    // this.get_data();
   }, // end mounted
 }); // end vue app

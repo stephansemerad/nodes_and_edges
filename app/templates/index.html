@@ -19,14 +19,16 @@
                     <div class="bg-gray-100  rounded" >
 
                         <!-- search -->
-                        <div class="grid grid-cols-3 gap-4 px-6 py-3">
+                        <div class="grid grid-cols-6 gap-4 px-6 py-3">
                             <div class="col-span-3">
-                                <label class="block text-xs font-medium text-gray-700">Search</label>
+                                <label class="block text-xs font-medium text-gray-700"  @click="display.search = !display.search">Search</label>
                                 <hr>
                             </div>
-                            <div class="col-span-2">
-                                <input  placeholder="Search" 
-                                        type="text"  id="title" 
+                            <div v-if="display.search" class="col-span-4">
+                                <input  v-on:keyup="get_structure()"
+                                        v-model="search"
+                                        placeholder="Search" 
+                                        type="text"
                                         class="w-full 
                                         border border-gray-300 
                                         rounded
@@ -36,8 +38,10 @@
                                         focus:border-indigo-500 
                                         text-sm">
                             </div>
-                            <div class="col-span-1">
-                                <button type="button" class="
+                            <div v-if="display.search" class="col-span-2">
+                                <button type="button" 
+                                    @click="get_structure()"
+                                    class="
                                     w-full    
                                     bg-indigo-600 
                                     border border-gray-300 
@@ -53,17 +57,81 @@
                                     Search
                                   </button>
                             </div>
+
+                            <div v-if="display.search" class="col-span-3">
+                                <button type="button" 
+                                    @click="save_as_svg()"
+                                    class="
+                                    w-full    
+                                    bg-indigo-600 
+                                    border border-gray-300 
+                                    rounded
+                                    shadow-sm py-2 px-4
+                                    justify-center
+                                    text-sm 
+                                    font-medium 
+                                    text-white 
+                                    hover:bg-indigo-700 focus:outline-none 
+                                    focus:ring-2 focus:ring-offset-2
+                                    focus:ring-indigo-500">
+                                    Save as SVG
+                                  </button>
+                            </div>
+
+                            <div v-if="display.search" class="col-span-3">
+                                <button type="button" 
+                                    @click="view_as_svg()"
+                                    class="
+                                    w-full    
+                                    bg-indigo-600 
+                                    border border-gray-300 
+                                    rounded
+                                    shadow-sm py-2 px-4
+                                    justify-center
+                                    text-sm 
+                                    font-medium 
+                                    text-white 
+                                    hover:bg-indigo-700 focus:outline-none 
+                                    focus:ring-2 focus:ring-offset-2
+                                    focus:ring-indigo-500">
+                                    View as SVG
+                                  </button>
+                            </div>
+
                         </div>
 
                         <!-- structure -->
                         <div class="grid grid-cols-3 gap-4 px-6 py-3">
                             <div class="col-span-3">
-                                <label class="block text-xs font-medium text-gray-700">Structure</label>
+                                <label class="block text-xs font-medium text-gray-700" @click="display.structure = !display.structure">Structure</label>
                                 <hr>
                             </div>
-                            <div class="col-span-3">
+
+                            <div v-if="display.structure" class="col-span-2">
+                                <input  v-model="structure.name"
+                                        placeholder="Name" 
+                                        type="text" 
+                                        class="w-full 
+                                        border border-gray-300 
+                                        rounded
+                                        shadow-sm py-2 px-2
+                                        focus:outline-none 
+                                        focus: ring-indigo-500 
+                                        focus:border-indigo-500 
+                                        text-sm">
+                            </div>
+                            <div v-if="display.structure" class="col-span-1">
+                                <button type="button" 
+                                    @click="add_structure()"
+                                    class="w-full bg-indigo-600  border border-gray-300  rounded shadow-sm py-2 px-4 justify-center text-sm  font-medium  text-white  hover:bg-indigo-700 focus:outline-none  focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    Add
+                                  </button>
+                            </div>
+
+                            <div v-if="display.structure" class="col-span-3">
                                 <select 
-                                    v-model="structure.id"    
+                                    v-model="structure_id"    
+                                    @change="get_structure()"
                                     class="
                                     w-full 
                                     border border-gray-300 
@@ -73,22 +141,24 @@
                                     focus:ring-indigo-500 
                                     focus:border-indigo-500 
                                     text-sm">
-                                    <option value="test">test</option>
+                                    <option value="1">test 1</option>
+                                    <option value="2">test 2</option>
+                                    <option value="3">test 3</option>
                                 </select>
                             </div>
                         </div>
                         <!-- end structure -->
 
                         <!-- layout -->
-                        <div class="grid grid-cols-3 gap-4 px-6 py-3">
+                        <div class="grid grid-cols-4 gap-4 px-6 py-3">
                             <div class="col-span-3">
-                                <label class="block text-xs font-medium text-gray-700">Layout</label>
+                                <label class="block text-xs font-medium text-gray-700 "  @click="display.layout = !display.layout">Layout</label>
                                 <hr>
                             </div>
-                            <div class="col-span-3">
+                            <div v-if="display.layout" class="col-span-2">
                                 <select 
-                                    v-model="structure.layout"   
-                                    @change="graph()" 
+                                    v-model="layout"   
+                                    @change="get_structure()" 
                                     class="
                                     w-full 
                                     border border-gray-300 
@@ -101,7 +171,7 @@
                                     <option value="breadthfirst">breadthfirst</option>
                                     <!-- <option value="cola">cola</option> -->
                                     <!-- <option value="dagre">dagre</option> -->
-                                    <option value="klay">klay</option>
+                                    <!-- <option value="klay">klay</option> -->
                                     <option value="circle">circle</option>
                                     <option value="grid">grid</option>
                                     <option value="random">random</option>
@@ -110,16 +180,117 @@
 
                                 </select>
                             </div>
+
+                            <div v-if="display.layout" class="col-span-2">
+                                <select 
+                                    v-model="curve_style"   
+                                    @change="get_structure()" 
+                                    class="
+                                    w-full 
+                                    border border-gray-300 
+                                    rounded
+                                    shadow-sm py-2 px-2
+                                    focus:outline-none 
+                                    focus:ring-indigo-500 
+                                    focus:border-indigo-500 
+                                    text-sm">
+                                    <option value="straight">straight</option>
+                                    <option value="unbundled-bezier">unbundled-bezier</option>
+                                    <option value="haystack">haystack</option>
+                                    <option value="segments">segments</option>
+                                    <option value="taxi">taxi</option>
+                                </select>
+                            </div>
+
                         </div>
                         <!-- end layout -->
+
+
+                        <!-- groups -->
+                        <div class="grid grid-cols-3 gap-4 px-6 py-3">
+                            <div class="col-span-3">
+                                <label class="block text-xs font-medium text-gray-700" @click="display.groups = !display.groups">Groups</label>
+                                <hr>
+                            </div>
+
+                            <div v-if="display.groups" class="col-span-1">
+                                <input  v-model="group.name"
+                                        placeholder="Name" 
+                                        type="text" 
+                                        class="w-full 
+                                        border border-gray-300 
+                                        rounded
+                                        shadow-sm py-2 px-2
+                                        focus:outline-none 
+                                        focus: ring-indigo-500 
+                                        focus:border-indigo-500 
+                                        text-sm">
+                            </div>
+
+                            <div v-if="display.groups" class="col-span-1">
+                                <input  v-model="group.color"
+                                        placeholder="Color" 
+                                        type="color" 
+                                        class="w-full h-full rounded shadow-sm border border-gray-300 ">
+                            </div>
+
+                            <div v-if="display.groups" class="col-span-1">
+                                <button type="button" 
+                                    @click="add_group()"
+                                    class="w-full bg-indigo-600  border border-gray-300  rounded shadow-sm py-2 px-4 justify-center text-sm  font-medium  text-white  hover:bg-indigo-700 focus:outline-none  focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    Add
+                                  </button>
+                            </div>
+                            <div v-if="display.groups" class="col-span-3">
+                                <table class="min-w-full border-separate text-center text-xs" style="border-spacing: 0">
+                                    <thead class="bg-gray-50">
+                                      <tr>
+                                        <th scope="col" class="select-none px-6 py-2 font-medium whitespace-nowrap">ID</th>
+                                        <th scope="col" class="select-none px-6 py-2 font-medium whitespace-nowrap">Name</th>
+                                        <th scope="col" class="select-none px-6 py-2 font-medium whitespace-nowrap">Color</th>
+                                        <th scope="col" class="select-none px-6 py-2 font-medium whitespace-nowrap">Delete</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody class="bg-white ">
+                                      <tr v-for="group in groups">
+                                        <td class="whitespace-nowrap border-b border-gray-200 px-6 py-2">[[group.id]]</td>
+                                        <td class="whitespace-nowrap border-b border-gray-200 px-6 py-2">
+                                            <input  type="text" 
+                                                    style="text-align:center" 
+                                                    v-bind:value="group.name"
+                                            >
+                                        </td>
+                                        <td class="whitespace-nowrap border-b border-gray-200 px-6 py-2">
+                                            <input  type="color" 
+                                                    style="text-align:center" 
+                                                    v-bind:value="group.color"
+                                            >
+                                        </td>
+                                        <td class="whitespace-nowrap border-b border-gray-200 px-6 py-2">
+                                            <a href="#" @click="delete_node(node.data.id)">
+                                                <i class="fas fa-times-circle text-indigo-500"></i>
+                                            </a>
+                                        </td>
+
+                                      </tr>
+                        
+                                      <!-- More people... -->
+                                    </tbody>
+                                  </table>
+                            </div>
+                        </div>
+                        <!-- end groups -->
+
+
+
 
                         <!-- nodes -->
                         <div class="grid grid-cols-3 gap-4 px-6 py-3">
                             <div class="col-span-3">
-                                <label class="block text-xs font-medium text-gray-700">Nodes</label>
+                                <label class="block text-xs font-medium text-gray-700"  @click="display.nodes = !display.nodes">Nodes</label>
                                 <hr>
                             </div>
-                            <div class="col-span-2">
+                            <div v-if="display.nodes" class="col-span-2">
                                 <input  v-model="node.name"
                                         placeholder="Name" 
                                         type="text" 
@@ -132,7 +303,7 @@
                                         focus:border-indigo-500 
                                         text-sm">
                             </div>
-                            <div class="col-span-1">
+                            <div v-if="display.nodes" class="col-span-1">
                                 <button type="button" 
                                     @click="add_node()"
                                     class="
@@ -151,7 +322,7 @@
                                     Add
                                   </button>
                             </div>
-                            <div class="col-span-3">
+                            <div v-if="display.nodes" class="col-span-3">
 
                                 <table class="min-w-full border-separate text-center text-xs" style="border-spacing: 0">
                                     <thead class="bg-gray-50">
@@ -165,8 +336,18 @@
                                     <tbody class="bg-white ">
                                       <tr v-for="node in structure.nodes">
                                         <td class="whitespace-nowrap border-b border-gray-200 px-6 py-2">[[node.data.id]]</td>
-                                        <td class="whitespace-nowrap border-b border-gray-200 px-6 py-2">[[node.data.name]]</td>
-                                        <td class="whitespace-nowrap border-b border-gray-200 px-6 py-2">[[node.data.group]]</td>
+                                        <td class="whitespace-nowrap border-b border-gray-200 px-6 py-2">
+                                            <input  type="text" 
+                                                    style="text-align:center" 
+                                                    v-bind:value="node.data.name"
+                                            >
+                                        </td>
+                                        <td class="whitespace-nowrap border-b border-gray-200 px-6 py-2">
+                                            <select v-bind:value="node.data.group" @change="update('node', 'group', node.data.id, $event.target.value )">
+                                                <option value=""></option>
+                                                <option v-for="group in groups" v-bind:value="group.id">[[group.id]] - [[group.name]]</option>
+                                            </select>    
+                                        </td>
                                         <td class="whitespace-nowrap border-b border-gray-200 px-6 py-2">
                                             <a href="#" @click="delete_node(node.data.id)">
                                                 <i class="fas fa-times-circle text-indigo-500"></i>
@@ -186,11 +367,11 @@
                         <!-- edges -->
                         <div class="grid grid-cols-3 gap-4 px-6 py-3">
                             <div class="col-span-3">
-                                <label class="block text-xs font-medium text-gray-700">Edges</label>
+                                <label class="block text-xs font-medium text-gray-700" @click="display.edges = !display.edges">Edges</label>
                                 <hr>
                             </div>
-                            <div class="col-span-1">
-                                <label class="block text-sm font-medium text-gray-700">Parent</label>
+                            <div v-if="display.edges" class="col-span-1">
+                                <label class="block text-xs font-medium text-gray-700">Parent</label>
                                 <select 
                                     v-model="edge.parent"
                                     class="
@@ -206,8 +387,8 @@
                                 </select>
 
                             </div>
-                            <div class="col-span-1">
-                                <label class="block text-sm font-medium text-gray-700">Child</label>
+                            <div v-if="display.edges" class="col-span-1">
+                                <label class="block text-xs font-medium text-gray-700">Child</label>
                                 <select 
                                     v-model="edge.child"
                                     class="
@@ -223,8 +404,7 @@
 
                                 </select>
                             </div>
-                            
-                            <div class="col-span-1">
+                            <div v-if="display.edges" class="col-span-1">
                                 <label class="block text-sm font-medium text-gray-700 text-gray-100">-</label>
                                 <button type="button" 
                                 @click="add_edge()"
@@ -244,8 +424,7 @@
                                     Add
                                   </button>
                             </div>
-
-                            <div class="col-span-3">
+                            <div v-if="display.edges" class="col-span-3">
 
                                 <table class="min-w-full border-separate text-center text-xs" style="border-spacing: 0">
                                     <thead class="bg-gray-50">
@@ -263,7 +442,12 @@
 
                                         <td class="whitespace-nowrap border-b border-gray-200 px-6 py-2">[[edge.data.source]]</td>
                                         <td class="whitespace-nowrap border-b border-gray-200 px-6 py-2">[[edge.data.target]]</td>
-                                        <td class="whitespace-nowrap border-b border-gray-200 px-6 py-2">[[edge.data.label]]</td>
+                                        <td class="whitespace-nowrap border-b border-gray-200 px-6 py-2">
+                                            <input  type="text" 
+                                                style="text-align:center" 
+                                                v-bind:value="edge.data.label"
+                                                @change="update('edge', 'label', edge.data.id, $event.target.value)"></input>
+                                        </td>
 
                                         <td class="whitespace-nowrap border-b border-gray-200 px-6 py-2">
                                             <a href="#" @click="delete_edge(edge.data.id)">
@@ -273,7 +457,6 @@
 
                                       </tr>
                         
-                                      <!-- More people... -->
                                     </tbody>
                                   </table>
                             </div>
@@ -284,9 +467,9 @@
                         <!-- json display -->
                         <div class="grid grid-cols-3 gap-4 px-6 py-3">
                             <div class="col-span-3">
-                                <label class="block text-sm font-medium text-gray-700">JSON</label>
+                                <label class="block text-xs font-medium text-gray-700" @click="display.json = !display.json">Json</label>
                             </div>
-                            <div class="col-span-3">
+                            <div v-if="display.json" class="col-span-3">
                                 <textarea  class="w-full 
                                 border border-gray-300 
                                 rounded
