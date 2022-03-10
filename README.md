@@ -1,6 +1,6 @@
 Nodes and Edges is a Python Application for building own structures.
 
-![alt text](https://github.com/stephansemerad/nodes_and_edges/app/static/main.jpg)
+![alt text](https://github.com/stephansemerad/nodes_and_edges/app/static/imgs/main.jpg)
 
 ## Installation
 
