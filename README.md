@@ -1,4 +1,4 @@
-Nodes and Edges is a Python Application for building own structures.
+Nodes and Edges is a Python Application for building own structures using cytoscape.
 
 ![alt text](https://github.com/stephansemerad/nodes_and_edges/blob/main/app/static/imgs/main.jpg)
 
