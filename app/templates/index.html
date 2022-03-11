@@ -258,16 +258,20 @@
                                             <input  type="text" 
                                                     style="text-align:center" 
                                                     v-bind:value="group.name"
+                                                    @change="update('group', 'name', group.id, $event.target.value )"
                                             >
                                         </td>
                                         <td class="whitespace-nowrap border-b border-gray-200 px-6 py-2">
-                                            <input  type="color" 
+                                            <input  
+                                                    @change="update('group', 'color', group.id, $event.target.value)"
+                                                    type="color" 
                                                     style="text-align:center" 
                                                     v-bind:value="group.color"
+                                                    @change="update('group', 'color', group.id, $event.target.value )"
                                             >
                                         </td>
                                         <td class="whitespace-nowrap border-b border-gray-200 px-6 py-2">
-                                            <a href="#" @click="delete_node(node.data.id)">
+                                            <a href="#" @click="delete_group(group.id)">
                                                 <i class="fas fa-times-circle text-indigo-500"></i>
                                             </a>
                                         </td>
@@ -340,10 +344,15 @@
                                             <input  type="text" 
                                                     style="text-align:center" 
                                                     v-bind:value="node.data.name"
+                                                    @change="update('node', 'name', node.data.id, $event.target.value )"
                                             >
                                         </td>
+
+
                                         <td class="whitespace-nowrap border-b border-gray-200 px-6 py-2">
-                                            <select v-bind:value="node.data.group" @change="update('node', 'group', node.data.id, $event.target.value )">
+                                            <select 
+                                                v-bind:value="node.data.group_id"
+                                                @change="update('node', 'group', node.data.id, $event.target.value )">
                                                 <option value=""></option>
                                                 <option v-for="group in groups" v-bind:value="group.id">[[group.id]] - [[group.name]]</option>
                                             </select>    

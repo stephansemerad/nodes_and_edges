@@ -1,4 +1,5 @@
 import json
+from tokenize import group
 from app import app, db
 from app.model.postgres import Structure, Node, Edge
 from flask import render_template, jsonify, request
@@ -104,26 +105,42 @@ def update():
     print('id: ', id)
     print('value: ', value)
     print('------------------')
-
     
     if table:
+        query = None
         if table == 'edge':
-            edge = db.session.query(Edge).filter(Edge.id == id).first()
-            if edge:
-                if column == 'label': edge.label = value
-                db.session.add(edge)
-                db.session.commit()
-                
-        if table == 'node':
-            node = db.session.query(Node).filter(Node.id == id).first()
-            if node:
-                if column == 'group': node.group = value
-                
-                db.session.add(node)
-                db.session.commit()
+            query = db.session.query(Edge).filter(Edge.id == id).first()
+        elif table == 'node':
+            query = db.session.query(Node).filter(Node.id == id).first()    
+        elif table == 'group':
+            query = db.session.query(Group).filter(Group.id == id).first()    
+        else:
+            pass
+        
+        if query:
+            if column == 'label': query.label = value
+            if column == 'group': query.group_id = value
+            if column == 'color': query.color = value
+            if column == 'name':  query.name = value
+
+            db.session.add(query)
+            db.session.commit()
+
+            return jsonify( {'status': 'ok'} )
+
+    return jsonify( {'status': 'notok'} )
+
+
+@app.route('/delete_group', methods = ['POST'])
+def delete_group():
+    id = request.form.get('id', None)
+    node = db.session.query(Group).filter(Group.id == id).first()
+    db.session.delete(node)
+    db.session.commit()
     
     return jsonify( {'status': 'ok'} )
 
+    
 
 @app.route('/delete_node', methods = ['POST'])
 def delete_node():

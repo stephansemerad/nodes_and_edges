@@ -26,12 +26,18 @@ class Node(db.Model):
     id                  = db.Column(db.Integer, primary_key=True)
     structure_id        = db.Column(db.Integer, ForeignKey('structure.id'))
     name                = db.Column(db.String,  nullable=False)
-    group_id            = db.Column(db.Integer)
-    classes             = db.Column(db.String)
+    group_id            = db.Column(db.Integer, db.ForeignKey('group.id', ondelete='set null'))
+
+    group               = db.relationship("Group", foreign_keys=[group_id])
 
     def as_dict(self):  
         dictionary =  {c.name: str(getattr(self, c.name)) for c in self.__table__.columns}
-        dictionary['full_name'] = f'{str(self.id)} - {self.name}'
+        group_name  = f'({self.group.name})' if self.group else ''
+        
+        dictionary['group_id']      = self.group.id if self.group else ''
+        dictionary['group_color']   = f'{self.group.color}' if self.group else ''
+        dictionary['full_name']     = f'{str(self.id)} - {self.name} {group_name}'
+        
         return dictionary
 
 class Edge(db.Model):
@@ -39,7 +45,6 @@ class Edge(db.Model):
     source          = db.Column(db.String, ForeignKey('node.id'), nullable=False)
     target          = db.Column(db.String, ForeignKey('node.id'), nullable=False)
     label           = db.Column(db.String, default="")
-    classes         = db.Column(db.String)
 
     def as_dict(self):  
         dictionary =  {c.name: str(getattr(self, c.name)) for c in self.__table__.columns}

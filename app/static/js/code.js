@@ -100,7 +100,7 @@ new Vue({
         console.log(response);
         console.log(response.data.status);
         if (response.data.status === "ok") {
-          this.get_structure();
+          this.get_groups();
         }
       });
     },
@@ -158,6 +158,28 @@ new Vue({
       });
     },
 
+    delete_structure(id) {
+      console.log("delete_structure");
+      console.log("id: ", id);
+      var fd = new FormData();
+      fd.append("id", id);
+      axios.post("/delete_structure", fd).then((response) => {
+        console.log(response.data);
+        this.get_structure();
+      });
+    },
+
+    delete_group(id) {
+      console.log("delete_group");
+      console.log("id: ", id);
+      var fd = new FormData();
+      fd.append("id", id);
+      axios.post("/delete_group", fd).then((response) => {
+        console.log(response.data);
+        this.get_structure();
+      });
+    },
+
     delete_node(id) {
       console.log("delete_node");
       console.log("id: ", id);
@@ -184,6 +206,7 @@ new Vue({
 
     get_structure() {
       console.log("get_structure");
+      this.get_groups();
       axios
         .get("/get_structure", {
           params: {
@@ -251,7 +274,6 @@ new Vue({
   }, // end methods
   mounted: function () {
     this.get_structure();
-    this.get_groups();
     // this.get_data();
   }, // end mounted
 }); // end vue app
