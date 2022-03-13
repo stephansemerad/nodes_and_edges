@@ -154,6 +154,7 @@ new Vue({
       axios.post("/update", fd).then((response) => {
         console.log(response);
         console.log(response.data.status);
+        this.get_groups();
         this.get_structure();
       });
     },
@@ -176,6 +177,7 @@ new Vue({
       fd.append("id", id);
       axios.post("/delete_group", fd).then((response) => {
         console.log(response.data);
+        this.get_groups();
         this.get_structure();
       });
     },
@@ -274,6 +276,7 @@ new Vue({
   }, // end methods
   mounted: function () {
     this.get_structure();
+    this.get_groups();
     // this.get_data();
   }, // end mounted
 }); // end vue app

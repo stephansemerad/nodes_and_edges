@@ -207,29 +207,53 @@ def get_structure():
         "text-valign": "center",
         "shape": "rectangle",
         "width": "150px",
-        "height": "30px",
         "padding": 2
         }
     },
 
-        {
+    {
         "selector": ".gold",
         "css": {
-        "content": "data(full_name)",
-        "color": "#FFFFFF",
-        "backgroundColor": "#CFB53B",
-        "text-wrap": "wrap",
-        "text-max-width": 120,
-        "font-size": "15px",
-        "text-valign": "center",
-        "shape": "rectangle",
-        "width": "150px",
-        "height": "30px",
-        "padding": 2
+            "content": "data(full_name)",
+            "color": "#FFFFFF",
+            "backgroundColor": "#CFB53B",
+            "text-wrap": "wrap",
+            "text-max-width": 120,
+            "font-size": "15px",
+            "text-valign": "center",
+            "shape": "rectangle",
+            "width": "150px",
+            "padding": 2
         }
     },
     
-    {
+
+    ]
+
+
+    groups = db.session.query(Group).all()
+    for group in groups:
+        print(group.id)
+        print(group.color)
+
+        style.append({
+        "selector": "."+str(group.id),
+            "css": {
+                "content": "data(full_name)",
+                "color": "#FFFFFF",
+                "backgroundColor": group.color,
+                "text-wrap": "wrap",
+                "text-max-width": 120,
+                "font-size": "15px",
+                "text-valign": "center",
+                "shape": "rectangle",
+                "width": "150px",
+                "padding": 2
+            }
+        })
+
+
+    style.append({
         "selector": "edge",
         "css": {
         "target-arrow-shape": "triangle",
@@ -238,26 +262,28 @@ def get_structure():
         "line-color": "#888888",
         "target-arrow-color": "#888888"
         }
-    },
-    {
+    })
+    style.append({
         "selector": "edge[label]",
         "css": {
         "label": "data(label)",
         "font-size": "16px",
         "color": "#888888"
         }
-    }
-    ]
+    })
 
     node_list = []
     for node in nodes:
         node = node.as_dict()
-        classes = ''
+        classes = node['group_id']
         if search:
-            if search.lower().strip() in node['name'].lower().strip():
+            print('search: ', search.lower().strip())
+            print('node: ', node['full_name'].lower().strip())
+            print(search.lower().strip() in node['full_name'].lower().strip())
+            if search.lower().strip() in node['full_name'].lower().strip():
                 classes = 'gold'
             
-        node_list.append({ "data": node, 'classes': classes })
+        node_list.append({ "data": node, 'classes':  str(classes) })
 
     structure =  {
       'structure_id' : structure_id,
